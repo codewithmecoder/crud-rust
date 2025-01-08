@@ -3,6 +3,7 @@ mod config;
 mod db;
 mod dtos;
 mod error;
+mod handler;
 mod models;
 mod utils;
 use actix_cors::Cors;
