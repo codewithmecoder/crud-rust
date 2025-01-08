@@ -28,7 +28,7 @@ pub fn hash(password: impl Into<String>) -> Result<String, ErrorMessage> {
     Ok(hashed_password)
 }
 
-pub fn compare(password: &str) -> Result<bool, ErrorMessage> {
+pub fn compare(password: &str, hashed_password: &str) -> Result<bool, ErrorMessage> {
     if password.is_empty() {
         return Err(ErrorMessage::EmptyPassword);
     }
@@ -37,12 +37,12 @@ pub fn compare(password: &str) -> Result<bool, ErrorMessage> {
         return Err(ErrorMessage::ExceededMaxPasswordLength(MAX_PASSWORD_LENGTH));
     }
 
-    let argon2 = Argon2::default();
-    let password_hash =
-        PasswordHash::new(&password).map_err(|_| ErrorMessage::InvalidHashFormat)?;
+    let parsed_hash =
+        PasswordHash::new(hashed_password).map_err(|_| ErrorMessage::InvalidHashFormat)?;
 
-    let password_verifier = argon2
-        .verify_password(password.as_bytes(), &password_hash)
+    let password_matches = Argon2::default()
+        .verify_password(password.as_bytes(), &parsed_hash)
         .map_or(false, |_| true);
-    Ok(password_verifier)
+
+    Ok(password_matches)
 }

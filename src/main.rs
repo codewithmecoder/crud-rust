@@ -15,7 +15,7 @@ use db::DbClient;
 use dotenv::dotenv;
 use dtos::{
     FilterUserDto, LoginUserDto, RegisterUserDto, Response, UserDto, UserListResonseDto,
-    UserLoginResonseDto, UserResonseDto,
+    UserLoginResponseDto, UserResponseDto,
 };
 use sqlx::postgres::PgPoolOptions;
 use utoipa::{
@@ -26,6 +26,7 @@ use utoipa_rapidoc::RapiDoc;
 use utoipa_redoc::{Redoc, Servable};
 use utoipa_swagger_ui::SwaggerUi;
 
+use handler::auth as authHandler;
 #[derive(Debug, Clone)]
 pub struct AppState {
     pub env: Config,
@@ -34,14 +35,14 @@ pub struct AppState {
 
 #[derive(OpenApi)]
 #[openapi(
-    paths(health_checker_handler),
+    paths(authHandler::login, authHandler::logout, authHandler::register, health_checker_handler),
     components(schemas(
         UserDto,
         FilterUserDto,
         LoginUserDto,
         RegisterUserDto,
-        UserResonseDto,
-        UserLoginResonseDto,
+        UserResponseDto,
+        UserLoginResponseDto,
         Response,
         UserListResonseDto
     )),
@@ -125,6 +126,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .app_data(web::Data::new(app_state.clone()))
             .wrap(cors)
             .wrap(Logger::default())
+            .service(authHandler::auth_handler())
             .service(health_checker_handler)
             .service(Redoc::with_url("/redoc", open_api.clone()))
             .service(RapiDoc::new("/api-docs/openapi.json").path("/redoc"))

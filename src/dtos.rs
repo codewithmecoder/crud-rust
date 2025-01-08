@@ -101,7 +101,7 @@ pub struct UserDto {
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct UserResonseDto {
+pub struct UserResponseDto {
     pub status: String,
     pub data: UserDto,
 }
@@ -114,7 +114,7 @@ pub struct UserListResonseDto {
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct UserLoginResonseDto {
+pub struct UserLoginResponseDto {
     pub status: String,
     pub token: String,
 }
