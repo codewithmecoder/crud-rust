@@ -12,3 +12,9 @@ cargo install cargo-edit
 ```SHELL
 sqlx migrate add -r name_migration
 ```
+
+## For query compile time run
+
+```SHELL
+cargo sqlx prepare
+```
