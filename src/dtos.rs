@@ -90,7 +90,7 @@ impl FilterUserDto {
         }
     }
 
-    pub fn filter_users(users: Vec<User>) -> Vec<Self> {
+    pub fn filter_users(users: &Vec<User>) -> Vec<Self> {
         users.iter().map(Self::filter_user).collect()
     }
 }
@@ -107,10 +107,10 @@ pub struct UserResponseDto {
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct UserListResonseDto {
+pub struct UserListResponseDto {
     pub status: String,
     pub data: Vec<FilterUserDto>,
-    result: usize,
+    pub result: usize,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]

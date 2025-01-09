@@ -14,7 +14,7 @@ use config::Config;
 use db::DbClient;
 use dotenv::dotenv;
 use dtos::{
-    FilterUserDto, LoginUserDto, RegisterUserDto, Response, UserDto, UserListResonseDto,
+    FilterUserDto, LoginUserDto, RegisterUserDto, Response, UserDto, UserListResponseDto,
     UserLoginResponseDto, UserResponseDto,
 };
 use sqlx::postgres::PgPoolOptions;
@@ -26,7 +26,7 @@ use utoipa_rapidoc::RapiDoc;
 use utoipa_redoc::{Redoc, Servable};
 use utoipa_swagger_ui::SwaggerUi;
 
-use handler::auth as authHandler;
+use handler::{auth as authHandler, users};
 #[derive(Debug, Clone)]
 pub struct AppState {
     pub env: Config,
@@ -35,7 +35,7 @@ pub struct AppState {
 
 #[derive(OpenApi)]
 #[openapi(
-    paths(authHandler::login, authHandler::logout, authHandler::register, health_checker_handler),
+    paths(authHandler::login, authHandler::logout, authHandler::register, users::get_me, users::get_users, health_checker_handler),
     components(schemas(
         UserDto,
         FilterUserDto,
@@ -44,7 +44,7 @@ pub struct AppState {
         UserResponseDto,
         UserLoginResponseDto,
         Response,
-        UserListResonseDto
+        UserListResponseDto
     )),
     tags(
         (name = "Rust Authentication Api", description = "Authentication in Rust API")
@@ -127,6 +127,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .wrap(cors)
             .wrap(Logger::default())
             .service(authHandler::auth_handler())
+            .service(users::users_handler())
             .service(health_checker_handler)
             .service(Redoc::with_url("/redoc", open_api.clone()))
             .service(RapiDoc::new("/api-docs/openapi.json").path("/redoc"))
