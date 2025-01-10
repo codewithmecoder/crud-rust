@@ -26,9 +26,16 @@ pub fn users_handler() -> Scope {
     path = "/api/users/me",
     tag = "Get Authenticated User Endpoint",
     responses(
-        (status = 200, description= "Authenticated User", body = UserResponseDto),
-        (status= 500, description= "Internal Server Error", body = Response )
-       
+        (
+            status = 200, 
+            description= "Authenticated User", 
+            body = UserResponseDto
+        ),
+        (
+            status= 500, 
+            description= "Internal Server Error", 
+            body = Response
+        )       
     ),
     security(
        ("token" = [])
@@ -55,10 +62,26 @@ pub async fn get_me(user: Authenticated) -> Result<HttpResponse, HttpError> {
         RequestQueryDto
     ),
     responses(
-        (status = 200, description= "All Users", body = [UserResponseDto]),
-        (status=401, description= "Authentication Error", body= Response),
-        (status=403, description= "Permission Denied Error", body= Response),
-        (status= 500, description= "Internal Server Error", body = Response )
+        (
+            status = 200, 
+            description= "All Users", 
+            body = [UserResponseDto]
+        ),
+        (
+            status = 401, 
+            description= "Authentication Error", 
+            body= Response
+        ),
+        (
+            status = 403, 
+                description= "Permission Denied Error", 
+            body= Response
+        ),
+        (
+            status = 500, 
+            description= "Internal Server Error", 
+            body = Response 
+        )
        
     ),
     security(
