@@ -57,19 +57,27 @@ struct SecurityAddon;
 
 impl Modify for SecurityAddon {
     fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
-        openapi.components = Some(
-            utoipa::openapi::ComponentsBuilder::new()
-                .security_scheme(
-                    "token",
-                    SecurityScheme::Http(
-                        HttpBuilder::new()
-                            .scheme(HttpAuthScheme::Bearer)
-                            .bearer_format("JWT")
-                            .build(),
-                    ),
-                )
-                .build(),
-        )
+        // Take existing components or create new
+        let mut components = openapi
+            .components
+            .take()
+            .unwrap_or_else(|| utoipa::openapi::ComponentsBuilder::new().build());
+
+        // Insert security scheme only if not present
+        if !components.security_schemes.contains_key("token") {
+            components.security_schemes.insert(
+                "token".to_string(),
+                SecurityScheme::Http(
+                    HttpBuilder::new()
+                        .scheme(HttpAuthScheme::Bearer)
+                        .bearer_format("JWT")
+                        .build(),
+                ),
+            );
+        }
+
+        // Restore components with schemas and new security scheme
+        openapi.components = Some(components);
     }
 }
 
